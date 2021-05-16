@@ -44,9 +44,9 @@ class Configuration {
     // The neutral angle of the joint relative to the modeled zero-angle in degrees, for each joint
     // Modify this after calibration
     float neutral_angle_degrees[3][4] = {
-      {  4.0,  4.0,  -1.0,  4.0},
-      { 44.0, 55.0, 43.0, 50.0},
-      {-42.0,-41.0,-43.0,-40.0}
+      {  5.0,  6.0,  3.0,  6.0},
+      { 43.0, 56.0, 43.0, 51.0},
+      {-43.0,-43.0,-43.0,-43.0}
     };
     
     int16_t servo_multipliers[3][4] {

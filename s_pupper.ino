@@ -44,13 +44,14 @@ const long LOOP_COUNT = 20;
 const int ledPin =  LED_BUILTIN;  // the number of the LED pin
 int ledState = LOW;               // ledState used to set the LED
 unsigned long previousMillis = 0; // will store last time LED was updated
-long interval;
+unsigned long interval;
 const long interval250 = 250;     // interval at which to blink (milliseconds)
 const long interval500 = 500;     // interval at which to blink (milliseconds)
 const long interval1000 = 1000;   // interval at which to blink (milliseconds)
 
 void setup() {
   Serial.begin(115200); // usb serial
+  delay( 1000 );
   pinMode( ledPin, OUTPUT );
   digitalWrite( ledPin, HIGH );
   delay( 1500 );  //Set built in LED to turn on to signal startup & not to disturb vehicle during IMU calibration
@@ -71,7 +72,7 @@ void setup() {
   controller.swing_controller.state = &state;
 
   state.debug_str = "pupper";
-  state.behavior_state = TROT; // REST
+  state.behavior_state = REST;
   state.verbose = false;
   
   controller.swing_controller.cmd = &cmd;
@@ -103,21 +104,53 @@ void setup() {
   Serial.println( "starting..." );
 }
 
+String comdata = "";
+
 //MAIN LOOP
 void loop() {
-
+  char c;
+  float p;
+  
   //if ( state.ticks > LOOP_COUNT ) while( 1 );
-
+  // read string from serial monitor
+  if ( Serial.available() ) {
+    comdata = Serial.readStringUntil( '\n' );
+    c = comdata.charAt( 0 );
+    comdata.remove( 0, 1 );
+    printfreeMemory();
+    switch( c ) { // command
+      case 't' : state.behavior_state = TROT; // trot
+      break; 
+      case 'e' : state.behavior_state = REST; // rest
+      break;
+      case 'o' : state.behavior_state = HOP; // hop
+      break;
+      case 'h' : 
+        p = comdata.toFloat();  // height
+        cmd.height = p; 
+      break;
+      case 'r' :
+        p = comdata.toFloat();  
+        cmd.roll = p; // Get command input here... body roll
+      break;
+      case 'p' : 
+        p = comdata.toFloat();  
+        cmd.pitch = p; // body pitch
+      break;
+      case 'x' : 
+        p = comdata.toFloat();  
+        cmd.horizontal_velocity[0] = p; // forward/backward motion
+      break;
+      case 'y' : 
+        p = comdata.toFloat();  
+        cmd.horizontal_velocity[1] = p; // left/right motion
+      break;
+    }; 
+  };
   
   prev_time = current_time;      
   current_time = micros();      
   dt = (current_time - prev_time)/1000000.0; 
-
-  // Get command input here...
-  cmd.pitch = 0.0;
-  cmd.roll = 0.0;
-  cmd.horizontal_velocity[0] = 0.0;
-  cmd.horizontal_velocity[1] = 0.0;
 
   // Set heartbeat interval
   if ( state.behavior_state == REST ) interval = interval1000; 
@@ -180,3 +213,27 @@ void setupBlink(int numBlinks,int upTime, int downTime) {
     delay(upTime);
   };
 };
+
+// Keep track of dynamic memory
+void printfreeMemory( void )
+{
+  Serial.print( "Free memory=" ); Serial.println( freeMemory() );  
+}
+
+#ifdef __arm__
+// should use uinstd.h to define sbrk but Due causes a conflict
+extern "C" char* sbrk(int incr);
+#else  // __ARM__
+extern char *__brkval;
+#endif  // __arm__
+ 
+int freeMemory( void ) {
+  char top;
+#ifdef __arm__
+  return &top - reinterpret_cast<char*>(sbrk(0));
+#elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
+  return &top - __brkval;
+#else  // __arm__
+  return __brkval ? &top - __brkval : &top - __malloc_heap_start;
+#endif  // __arm__
+}
