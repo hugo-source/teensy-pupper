@@ -8,9 +8,10 @@
 
 #include "utilities.h"
 
-//def deadband(value, band_radius):
-//    return max(value - band_radius, 0) + min(value + band_radius, 0)
-
+float deadband( float value, float band_radius)
+{
+  return max( value - band_radius, 0 ) + min( value + band_radius, 0 );
+};
 
 float clipped_first_order_filter( float input, float target, float max_rate, float tau )
 {

@@ -44,9 +44,9 @@ class Configuration {
     // The neutral angle of the joint relative to the modeled zero-angle in degrees, for each joint
     // Modify this after calibration
     float neutral_angle_degrees[3][4] = {
-      {  5.0,  6.0,  3.0,  6.0},
-      { 43.0, 56.0, 43.0, 51.0},
-      {-43.0,-43.0,-43.0,-43.0}
+      {  4.0,  0.0,  0.0,  6.0},
+      { 44.0, 48.0, 45.0, 55.0},
+      {-43.0,-47.0,-44.0,-47.0}
     };
     
     int16_t servo_multipliers[3][4] {
@@ -86,6 +86,8 @@ class Configuration {
     const float max_yaw_rate = 2.0;
     const float max_pitch = 30.0 * M_PI / 180.0;
         
+    const float max_roll = 30.0 * M_PI / 180.0;
+
     //#################### MOVEMENT PARAMS ####################
     const float z_time_constant = 0.02;
     const float z_speed = 0.03;  // maximum speed [m/s]

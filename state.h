@@ -12,16 +12,6 @@ using namespace std;
 
 #include "utilities.h"
 
-typedef enum BehaviorState
-{
-  DEACTIVATED = -1,
-  REST = 0,
-  TROT = 1,
-  HOP = 2,
-  FINISHHOP = 3,  
-} BehaviorState;
-
-
 class State 
 {
 

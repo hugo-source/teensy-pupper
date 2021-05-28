@@ -48,7 +48,7 @@ int32_t HardwareInterface::__duty_cycle( int32_t m )
 void HardwareInterface::set_PWM_duty_cycle( int16_t axis, int16_t leg, int32_t duty_cycle )
 {
   analogWrite( Config->PWMparams.pins[axis][leg], __duty_cycle( duty_cycle ) );
-  Serial.printf( "set_PWM_duty_cycle=%d\n", duty_cycle ); 
+  if ( state->verbose ) Serial.printf( "set_PWM_duty_cycle=%d\n", duty_cycle ); 
 //  Serial.print( ", axis/leg=" ); Serial.print( axis ); Serial.println( leg ); 
 };
 
@@ -63,7 +63,7 @@ void HardwareInterface::set_actuator_postions( void )
   float a[3][4];
   state->joint_angles.GetAngles( a );
   
-  if ( true ) { // state->verbose
+  if ( state->verbose ) { // state->verbose
     for ( int leg_index=0; leg_index<4; leg_index++ ) {
       float joint_angles_a[3];
       for ( int axis_index=0; axis_index<3; axis_index++ ) {
@@ -88,7 +88,7 @@ void HardwareInterface::send_servo_commands( void )
                 axis_index,
                 leg_index );
       //dc[axis_index] = duty_cycle;
-      if ( true ) { // state->verbose
+      if ( state->verbose ) { // state->verbose
         Serial.print( "Leg " ); Serial.print( leg_index );
         Serial.print( ", Axis " ); Serial.print( axis_index );
         Serial.print( ", PWM " ); Serial.println( duty_cycle );

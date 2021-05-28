@@ -99,8 +99,10 @@ void Controller::run(  ) {
   };
   switch ( state->behavior_state ) {
     case TROT :
-      Serial.println( "TROT" );
-      Serial.print( "ticks: " ); Serial.println( state->ticks );
+      if ( state->verbose ) { 
+        Serial.println( "TROT" );
+        Serial.print( "ticks: " ); Serial.println( uint32_t( state->ticks ) );
+      };
       step_gait( state->foot_locations, contact_modes );
       
       if ( state->debug ) PrintMatrix( (float*)state->foot_locations.Legs, 3, 4, "state->foot_locations");
@@ -137,7 +139,7 @@ void Controller::run(  ) {
     break;
 
     case HOP : ;
-      Serial.println( "HOP" );
+      if ( state->verbose ) Serial.println( "HOP" );
       for ( int i=0; i<3; i++ ) {
         for ( int j=0; j<4; j++ ) {
           state->foot_locations.Legs[i][j] = Config->ConfigParams.default_stance[i][j];
@@ -148,7 +150,7 @@ void Controller::run(  ) {
     break;
 
     case FINISHHOP : ;
-      Serial.println( "FINISHHOP" );
+      if ( state->verbose ) Serial.println( "FINISHHOP" );
       for ( int i=0; i<3; i++ ) {
         for ( int j=0; j<4; j++ ) {
           state->foot_locations.Legs[i][j] = Config->ConfigParams.default_stance[i][j];
@@ -159,7 +161,7 @@ void Controller::run(  ) {
     break;
 
     case REST : 
-       Serial.println( "REST" );
+       if ( state->verbose ) Serial.println( "REST" ); //
        float yaw_proportion = cmd->yaw_rate / Config->ConfigParams.max_yaw_rate;
        smoothed_yaw += ( Config->ConfigParams.dt * 
                          clipped_first_order_filter( smoothed_yaw,

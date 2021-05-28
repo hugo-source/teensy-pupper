@@ -4,12 +4,22 @@
 #include <math.h>
 #include <Arduino.h>
 
+float deadband( float value, float band_radius);
 float clipped_first_order_filter( float input, float target, float max_rate, float tau );
 
 // 3 row X 4 cols/legs array
 // Each col is a vector of abduction/hip/leg
 typedef float LegsArray[3][4]; 
 typedef float LegArray[3];
+
+typedef enum BehaviorState
+{
+  DEACTIVATED = -1,
+  REST = 0,
+  TROT = 1,
+  HOP = 2,
+  FINISHHOP = 3,  
+} BehaviorState;
 
 class QuadLegs
 {
