@@ -39,7 +39,8 @@ void HardwareInterface::set_actuator_position( float joint_angle, int16_t axis, 
 
 int32_t HardwareInterface::__duty_cycle( int32_t m )
 {
-  // Servos won't respond to a duty cycle > 2100 
+  // Servos won't respond to a duty cycle > 2100
+  if ( ( m < 800 ) or ( m > 2100 ) ) Serial.printf( "Range error %d\n", m );
   m = constrain( m, 800, 2100 );
   int32_t dc = m * Config->PWMparams.range * Config->PWMparams.freq / 1e6;
   return dc; 
@@ -48,7 +49,7 @@ int32_t HardwareInterface::__duty_cycle( int32_t m )
 void HardwareInterface::set_PWM_duty_cycle( int16_t axis, int16_t leg, int32_t duty_cycle )
 {
   analogWrite( Config->PWMparams.pins[axis][leg], __duty_cycle( duty_cycle ) );
-  if ( state->verbose ) Serial.printf( "set_PWM_duty_cycle=%d\n", duty_cycle ); 
+  if ( true ) Serial.printf( "set_PWM_duty_cycle=%d\n", duty_cycle ); 
 //  Serial.print( ", axis/leg=" ); Serial.print( axis ); Serial.println( leg ); 
 };
 
@@ -63,7 +64,7 @@ void HardwareInterface::set_actuator_postions( void )
   float a[3][4];
   state->joint_angles.GetAngles( a );
   
-  if ( state->verbose ) { // state->verbose
+  if ( true ) { // state->verbose
     for ( int leg_index=0; leg_index<4; leg_index++ ) {
       float joint_angles_a[3];
       for ( int axis_index=0; axis_index<3; axis_index++ ) {

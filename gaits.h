@@ -20,11 +20,11 @@ class GaitController
     Configuration *Config;
     State *state;
 
-    void contacts( int16_t ticks, int16_t contact_modes[4] );
-    float subphase_ticks( int ticks );
+    void contacts( uint32_t ticks, int16_t contact_modes[4] );
+    float subphase_ticks( uint32_t ticks );
   
   private:
-    int phase_index( int ticks );
+    int phase_index( uint32_t ticks );
 };  
 
 

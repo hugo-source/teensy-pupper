@@ -72,7 +72,6 @@ const float dt_inner = 0.01;
 unsigned long current_time, prev_time;
 
 float last_loop;
-const long LOOP_COUNT = 20;
 
 // heartbeat
 const int ledPin =  LED_BUILTIN;  // the number of the LED pin
@@ -163,24 +162,12 @@ void loop() {
   char c;
   float p;
   
-  //if ( state.ticks > LOOP_COUNT ) while( 1 );
   //Get vehicle commands for next loop iteration
   getCommands(); //pulls current available radio commands
   //Serial.printf( "Channels=%d, %d, %d, %d, %d, %d, %d\n", channel_1_pwm, channel_2_pwm, channel_3_pwm, 
   //                                                    channel_4_pwm, channel_5_pwm, channel_6_pwm, channel_7_pwm );
   //Serial.printf( "Sw1=%d, Sw2=%d, Sw3=%d\n", Sw1, Sw2, Sw3 );
   //Serial.printf( "x=%f, y=%f, pitch=%f, roll=%f (%d, %d, %d)\n", x_vel, y_vel, body_pitch, body_roll, Sw1, Sw2, Sw3 );
-
-
-//  switch ( Sw3 ) {
-//    case 0 : cmd.height = -0.14;
-//    break;
-//    case 1 : cmd.height = -0.16;
-//    break;
-//    case 2 : cmd.height = -0.18; 
-//    break;
-//  };
-    
 
   // read string from serial monitor
 //  if ( Serial.available() ) {
@@ -251,13 +238,21 @@ void loop() {
     joystick_interface.get_command();
 
     controller.run( );
+
+    if ( Sw2 == 1 ) { // special calibration, set all actuators to zero angle
+      for ( int16_t leg_index=0; leg_index<4; leg_index++ )
+        for ( int16_t axis_index=0; axis_index<3; axis_index++ )
+          state.joint_angles.Legs[axis_index][leg_index] = 
+            configuration.NEUTRAL_ANGLE_DEGREES[axis_index][leg_index] * M_PI / 180.0;
+    };
     // Update the pwm widths going to the servos
     hardware_interface.set_actuator_postions( );
 
     //Serial.printf( "horizontal velocity %f : %f\n", cmd.horizontal_velocity[0], cmd.horizontal_velocity[1] );
     //Serial.printf( "yaw rate %f, pitch %f\n", cmd.yaw_rate, cmd.pitch );
-    Serial.printf( "height %f\n", cmd.height );
-
+    //Serial.printf( "height %f\n", cmd.height );
+    //Serial.printf( "Ticks=%d\n", state.ticks );
+    //printfreeMemory();
   }; // end while
 
   // Pupper heartbeat
@@ -351,8 +346,8 @@ void getCommands() {
   Sw3 = GetSw( channel_7_pwm );
   channel_1_pwm -= 70;
   // Channel limits
-  ly = (channel_1_pwm - 1000.0)/1000.0; //between 0 and 1
-  lx = (channel_2_pwm - 1500.0)/500.0; //between -1 and 1
+  ly = (channel_1_pwm - 1000.0)/1000.0; // horizontal velocity between 0 and 1
+  lx = (channel_2_pwm - 1500.0)/500.0; // horizontal velocity between -1 and 1
 
   ry = (channel_3_pwm - 1500.0)/500.0; // pitch between -1 and 1
   rx = (channel_4_pwm - 1500.0)/500.0; // yaw_rate between -1 and 1
@@ -361,6 +356,7 @@ void getCommands() {
   lx = trunc( lx * 100 ) / 100;
   ly = trunc( ly * 100 ) / 100;
   ry = trunc( ry * 100 ) / 100;
+  ry *= -1; // invert pitch
   rx = trunc( rx * 100 ) / 100;
 }
 

@@ -21,7 +21,7 @@
         Int
             The index of the gait phase that the robot should be in.
 */
-int GaitController::phase_index( int ticks )
+int GaitController::phase_index( uint32_t ticks )
 {
   int phase_time = ticks % Config->phase_length();
   int phase_sum = 0;
@@ -48,7 +48,7 @@ int GaitController::phase_index( int ticks )
         numpy array (4,)
             Numpy vector with 0 indicating flight and 1 indicating stance.
 */
-void GaitController::contacts( int16_t ticks, int16_t contact_modes[4] ) 
+void GaitController::contacts( uint32_t ticks, int16_t contact_modes[4] ) 
 {
   int idx = phase_index( ticks );
   //Serial.print( "phase_index=" ); Serial.println( idx );
@@ -73,10 +73,10 @@ void GaitController::contacts( int16_t ticks, int16_t contact_modes[4] )
             Number of ticks since the start of the current phase.
         """
 */
-float GaitController::subphase_ticks( int ticks )
+float GaitController::subphase_ticks( uint32_t ticks )
 {
-  int phase_time = ticks % Config->phase_length();
-  int phase_sum = 0;
+  uint32_t phase_time = ticks % Config->phase_length();
+  uint32_t phase_sum = 0;
   float subphase_ticks = 0;
   for ( int i=0; i< Config->ConfigParams.num_phases; i++ ) {
     phase_sum += Config->phase_ticks( i );
