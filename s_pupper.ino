@@ -68,7 +68,8 @@ JoystickInterface joystick_interface;
 // main loop timing
 float dt;
 // inner loop timing
-const float dt_inner = 0.01;
+
+const float dt_inner[3] = {0.01, 0.0115, 0.0125};
 unsigned long current_time, prev_time;
 
 float last_loop;
@@ -176,32 +177,6 @@ void loop() {
 //    comdata.remove( 0, 1 );
 //    printfreeMemory();
 //    switch( c ) { // command
-//      case 't' : state.behavior_state = TROT; // trot
-//      break; 
-//      case 'e' : state.behavior_state = REST; // rest
-//      break;
-//      case 'o' : state.behavior_state = HOP; // hop
-//      break;
-//      case 'h' : 
-//        p = comdata.toFloat();  // height
-//        cmd.height = p; 
-//      break;
-//      case 'r' :
-//        p = comdata.toFloat();  
-//        cmd.roll = p; // Get command input here... body roll
-//      break;
-//      case 'p' : 
-//        p = comdata.toFloat();  
-//        cmd.pitch = p; // body pitch
-//      break;
-//      case 'x' : 
-//        p = comdata.toFloat();  
-//        cmd.horizontal_velocity[0] = p; // forward/backward motion
-//      break;
-//      case 'y' : 
-//        p = comdata.toFloat();  
-//        cmd.horizontal_velocity[1] = p; // left/right motion
-//      break;
 //    }; 
 //  };
  
@@ -218,7 +193,7 @@ void loop() {
   // Run pupper at ConfigParams.dt intervals
   while ( true ) {
     float now = float( micros() / 1000000.0 );
-    if ( ( now - last_loop ) < dt_inner )
+    if ( ( now - last_loop ) < dt_inner[Sw2] )
       break;
     //Serial.print( "time: " ); Serial.println( ( now - last_loop ) );
     last_loop = float( micros() / 1000000.0 );
@@ -239,12 +214,13 @@ void loop() {
 
     controller.run( );
 
-    if ( Sw2 == 1 ) { // special calibration, set all actuators to zero angle
-      for ( int16_t leg_index=0; leg_index<4; leg_index++ )
-        for ( int16_t axis_index=0; axis_index<3; axis_index++ )
-          state.joint_angles.Legs[axis_index][leg_index] = 
-            configuration.NEUTRAL_ANGLE_DEGREES[axis_index][leg_index] * M_PI / 180.0;
-    };
+    //if ( Sw2 == 1 ) { // special calibration, set all actuators to zero angle
+    //  for ( int16_t leg_index=0; leg_index<4; leg_index++ )
+    //    for ( int16_t axis_index=0; axis_index<3; axis_index++ )
+    //      state.joint_angles.Legs[axis_index][leg_index] = 
+    //        configuration.NEUTRAL_ANGLE_DEGREES[axis_index][leg_index] * M_PI / 180.0;
+    //};
+
     // Update the pwm widths going to the servos
     hardware_interface.set_actuator_postions( );
 

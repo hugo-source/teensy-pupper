@@ -24,13 +24,12 @@ class Configuration {
       {1, 4, 7, 22}, 
       {2, 5, 8, 9}
     };
-    int32_t range = 4096;
+    int32_t range = 4000;
     int16_t freq = 250;
   } PWMparams;
 
   // MICROS_PER_RAD and NEUTRAL_ANGLE_DEGREES should be determined by calibration
   #define MICROS_PER_RAD ( 11.333 * 180.0 / M_PI )
-  //#define MICROS_PER_RAD ( 15.333 * 180.0 / M_PI )
   const float NEUTRAL_ANGLE_DEGREES[3][4] = {
     {  0.0,  0.0,  0.0,  0.0},
     { 45.0, 45.0, 45.0, 45.0},
@@ -43,16 +42,21 @@ class Configuration {
 
     // The neutral angle of the joint relative to the modeled zero-angle in degrees, for each joint
     // Modify this after calibration
-    float neutral_angle_degrees[3][4] = {
-      {  6.0,  4.0,  0.0,  14.0},
-      { 44.0, 50.0, 40.0, 55.0},
-      {-40.0,-49.0,-40.0,-52.0}
-    };
+//    float neutral_angle_degrees[3][4] = {
+//      {  0.0,  0.0,  0.0,  0.0},
+//      { 45.0, 45.0, 45.0, 45.0},
+//      {-45.0,-45.0,-45.0,-45.0}
+//    };
 //    float neutral_angle_degrees[3][4] = {
 //      {  6.0,  -5.0,  0.0,  5.0},
-//      { 45.0, 43.0, 45.0, 51.0},
+//      { 46.0, 46.0, 46.0, 43.0},
 //      {-47.0,-45.0,-46.0,-47.0}
 //    };
+    float neutral_angle_degrees[3][4] = {
+      {  7.0,  -6.0, 1.0,  4.0},
+      { 44.0, 43.0, 46.0, 39.0},
+      {-48.0,-44.0,-53.0,-48.0}
+    };
     
     int16_t servo_multipliers[3][4] {
       {1, 1, 1, 1}, 
